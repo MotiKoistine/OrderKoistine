@@ -1,6 +1,19 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringJoiner;
 import javax.swing.*;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class Login{
 	JFrame frame;
@@ -14,7 +27,7 @@ public class Login{
 	Login(){
 		frame = new JFrame("Login");
 		frame.setSize(300,200);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		font = new Font("Arial",Font.PLAIN,20);
 		cont = new JPanel();
 		cont.setLayout(null);
@@ -29,10 +42,10 @@ public class Login{
 		loginBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				checkLogin(unField.getText(),pwField.getText());
+				checkLogin(unField.getText(),pwField.getPassword());
 			}
 		});
-		
+		frame.getRootPane().setDefaultButton(loginBtn);
 		cont.add(unLabel);
 		cont.add(unField);
 		cont.add(pwLabel);
@@ -44,12 +57,56 @@ public class Login{
 		frame.setVisible(true);
 	}
 	
-	private void checkLogin(String un,String pw){
+	private void checkLogin(String un,char[] pwC){
 		User user = new User();
-		user.username = un;
-		user.userId = 1235;
-		new MainProgram(user);
-		frame.dispose();
+		try {
+			URL url = new URL("http://koistine.com/OrderApi/login.php?");
+			URLConnection con = url.openConnection();
+			HttpURLConnection http = (HttpURLConnection)con;
+			http.setRequestMethod("POST");
+			http.setDoOutput(true);
+			Map<String, String> arg = new HashMap<>();
+			String pw = "";
+			for(char p : pwC) {
+				pw = pw + p;
+			}
+			arg.put("userid","80085y4y");
+			arg.put("username",un);
+			arg.put("pw",pw);
+			StringJoiner sj = new StringJoiner("&");
+			for(Map.Entry<String,String> entry : arg.entrySet()) {
+			    sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="  + URLEncoder.encode(entry.getValue(), "UTF-8"));
+			}
+			byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+			int length = out.length;
+			http.setFixedLengthStreamingMode(length);
+			http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			http.connect();
+			try(OutputStream os = http.getOutputStream()) {
+			    os.write(out);
+			}
+			InputStream is = http.getInputStream();
+			JSONTokener token = null;
+			JSONObject obj = null;
+			try {
+				token = new JSONTokener(is);
+				obj = new JSONObject(token);
+			}catch(Exception ex) {
+				
+			}
+			if(obj == null) {
+				resultLabel.setText("Incorrect username/password");
+			}
+			else if(obj.getString("login").equals("true")) {
+				user.username = obj.getString("username");
+				user.userId = obj.getInt("userid");
+				new MainProgram(user);
+				frame.dispose();
+			}
+			http.disconnect();
+		}catch(IOException e) {
+			
+		}
 	}
 	
 	
@@ -66,6 +123,6 @@ public class Login{
 		pwLabel.setBounds(5,45,140,30);
 		pwField.setBounds(120,45,140,30);
 		loginBtn.setBounds(158,80,100,30);
-		resultLabel.setBounds(5,115,160,30);
+		resultLabel.setBounds(5,115,300,30);
 	}
 }
