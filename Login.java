@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -75,9 +73,9 @@ public class Login{
 			arg.put("pw",pw);
 			StringJoiner sj = new StringJoiner("&");
 			for(Map.Entry<String,String> entry : arg.entrySet()) {
-			    sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="  + URLEncoder.encode(entry.getValue(), "UTF-8"));
+			    sj.add(entry.getKey() + "="  + entry.getValue());
 			}
-			byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+			byte[] out = sj.toString().getBytes();
 			int length = out.length;
 			http.setFixedLengthStreamingMode(length);
 			http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
