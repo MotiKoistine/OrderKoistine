@@ -19,6 +19,7 @@ public class MainProgram{
 	JButton customerBtn,itemBtn,deliveryBtn,exitBtn;
 	JLabel infoArea,timeArea,totalPriceLabel;
 	List<Item> items;
+	Customer customer;
 	
 	MainProgram(User user){
 		frame = new JFrame("OrderKoistine");
@@ -60,6 +61,12 @@ public class MainProgram{
 			@Override
 			public void keyReleased(KeyEvent e){}
 		});
+		customerBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new SearchCustomer();
+			}
+		});
 		exitBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -94,7 +101,9 @@ public class MainProgram{
 			finalPrice = finalPrice + totalPrice;
 			totalPriceArea.append(df.format(totalPrice) + "€\n");
 		}
-		totalPriceLabel.setText("Total: " + df.format(finalPrice) + "€");
+		if(finalPrice != 0) {
+			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "€");
+		}
 	}
 	private void setLayout(){
 		//Set fonts
