@@ -7,8 +7,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -29,6 +31,7 @@ public class SearchCustomer {
 	JTextField searchField;
 	JButton searchBtn;
 	Font font;
+	Customer customer;
 	SearchCustomer(){
 		frame = new JFrame("Customer search");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -73,6 +76,7 @@ public class SearchCustomer {
 		searchField.requestFocus();
 	}
 	private void performSearch(String search) {
+		List<Customer> customers = new ArrayList<>();
 		HttpURLConnection http = null;
 		JSONObject obj = null;
 		JSONTokener token;
@@ -105,10 +109,19 @@ public class SearchCustomer {
 				token = new JSONTokener(http.getInputStream());
 				obj = new JSONObject(token);
 				if(!obj.isNull("customers")) {
-					JSONObject customers = obj.getJSONObject("customers");
-					Iterator<String> keys = customers.keys();
-					while(keys.hasNext()) {
-						System.out.println(keys.next());
+					JSONArray customersArray = obj.getJSONArray("customers");
+					Iterator<Object> it = customersArray.iterator();
+					while(it.hasNext()) {
+						JSONObject customerObject = (JSONObject)it.next();
+						int cid = Integer.parseInt(customerObject.getString("customerid"));
+						String cname = customerObject.getString("name");
+						String cphone = customerObject.getString("phone");
+						customers.add(new Customer(cid,cname,null,null,null,cphone,null));
+						
+					}
+					customerArea.setText("");
+					for(Customer c : customers) {
+						customerArea.append(c.customerid + " " + c.name + " " + c.phone + "\n");
 					}
 				}
 			}catch(Exception e) {
