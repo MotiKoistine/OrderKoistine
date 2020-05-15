@@ -44,7 +44,7 @@ public class MainProgram{
 		exitBtn = new JButton("Exit");
 		infoArea = new JLabel(user.username + " (" + user.userId + ")");
 		timeArea = new JLabel("");
-		totalPriceLabel = new JLabel("Total: 0,00€");
+		totalPriceLabel = new JLabel("Total: 0,00â‚¬");
 		
 		setLayout();
 		displayInfo();
@@ -95,14 +95,14 @@ public class MainProgram{
 		while(i.hasNext()) {
 			Item row = i.next();
 			itemArea.append(row.itemName + "\n");
-			priceArea.append(df.format(row.priceOut) + "€\n");
+			priceArea.append(df.format(row.priceOut) + "ï¿½\n");
 			amountArea.append(row.amount + "pcs\n");
 			double totalPrice = row.amount * row.priceOut;
 			finalPrice = finalPrice + totalPrice;
-			totalPriceArea.append(df.format(totalPrice) + "€\n");
+			totalPriceArea.append(df.format(totalPrice) + "ï¿½\n");
 		}
 		if(finalPrice != 0) {
-			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "€");
+			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "â‚¬");
 		}
 	}
 	private void setLayout(){
