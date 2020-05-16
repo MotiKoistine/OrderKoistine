@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 public class MainProgram{
 	JFrame frame;
@@ -20,6 +21,7 @@ public class MainProgram{
 	JLabel infoArea,timeArea,totalPriceLabel;
 	List<Item> items;
 	Customer customer;
+	SearchCustomer searchCustomer;
 	
 	MainProgram(User user){
 		frame = new JFrame("OrderKoistine");
@@ -44,7 +46,7 @@ public class MainProgram{
 		exitBtn = new JButton("Exit");
 		infoArea = new JLabel(user.username + " (" + user.userId + ")");
 		timeArea = new JLabel("");
-		totalPriceLabel = new JLabel("Total: 0,00â‚¬");
+		totalPriceLabel = new JLabel("Total: 0,00€");
 		
 		setLayout();
 		displayInfo();
@@ -64,7 +66,8 @@ public class MainProgram{
 		customerBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new SearchCustomer();
+				searchCustomer = new SearchCustomer();
+				
 			}
 		});
 		exitBtn.addActionListener(new ActionListener() {
@@ -95,14 +98,14 @@ public class MainProgram{
 		while(i.hasNext()) {
 			Item row = i.next();
 			itemArea.append(row.itemName + "\n");
-			priceArea.append(df.format(row.priceOut) + "ï¿½\n");
+			priceArea.append(df.format(row.priceOut) + "€\n");
 			amountArea.append(row.amount + "pcs\n");
 			double totalPrice = row.amount * row.priceOut;
 			finalPrice = finalPrice + totalPrice;
-			totalPriceArea.append(df.format(totalPrice) + "ï¿½\n");
+			totalPriceArea.append(df.format(totalPrice) + "€\n");
 		}
 		if(finalPrice != 0) {
-			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "â‚¬");
+			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "€");
 		}
 	}
 	private void setLayout(){

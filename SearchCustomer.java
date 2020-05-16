@@ -115,13 +115,29 @@ public class SearchCustomer {
 						JSONObject customerObject = (JSONObject)it.next();
 						int cid = Integer.parseInt(customerObject.getString("customerid"));
 						String cname = customerObject.getString("name");
+						String caddress = customerObject.getString("address");
+						String ccity = customerObject.getString("city");
+						String cpostcode = customerObject.getString("postcode");
+						String cemail = customerObject.getString("email");
 						String cphone = customerObject.getString("phone");
-						customers.add(new Customer(cid,cname,null,null,null,cphone,null));
+						customers.add(new Customer(cid,cname,caddress,cpostcode,ccity,cphone,cemail));
 						
 					}
 					customerArea.setText("");
+					int hPos = 5;
 					for(Customer c : customers) {
 						customerArea.append(c.customerid + " " + c.name + " " + c.phone + "\n");
+						JButton cSelect = new JButton("Select");
+						cont.add(cSelect);
+						cSelect.setBounds(824,hPos,200,35);
+						cont.revalidate();
+						hPos = hPos + 40;
+						cSelect.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent ec) {
+								customer = c;
+							}
+						});
 					}
 				}
 			}catch(Exception e) {
@@ -131,12 +147,15 @@ public class SearchCustomer {
 		
 		
 	}
+	public Customer getCustomer() {
+		return customer;
+	}
 	private void setLayout() {
 		customerArea.setFont(font);
 		searchField.setFont(font);
 		searchBtn.setFont(font);
 		
-		customerArea.setBounds(5,5,1014,550);
+		customerArea.setBounds(5,5,814,550);
 		searchField.setBounds(5,560,814,40);
 		searchBtn.setBounds(819,560,200,40);
 	}
