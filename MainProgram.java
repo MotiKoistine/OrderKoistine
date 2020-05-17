@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 
 public class MainProgram{
 	JFrame frame;
@@ -46,7 +45,7 @@ public class MainProgram{
 		exitBtn = new JButton("Exit");
 		infoArea = new JLabel(user.username + " (" + user.userId + ")");
 		timeArea = new JLabel("");
-		totalPriceLabel = new JLabel("Total: 0,00€");
+		totalPriceLabel = new JLabel("Total: 0,00â‚¬");
 		
 		setLayout();
 		displayInfo();
@@ -67,7 +66,18 @@ public class MainProgram{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				searchCustomer = new SearchCustomer();
-				
+			}
+		});
+		deliveryBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getCustomer();
+				if(customer == null) {
+					System.out.println("Select customer first!");
+				}
+				else {
+					System.out.println("Customer: " + customer.name + " selected!");
+				}
 			}
 		});
 		exitBtn.addActionListener(new ActionListener() {
@@ -80,6 +90,13 @@ public class MainProgram{
 		frame.setVisible(true);
 		
 		codeField.requestFocus();
+	}
+	public void getCustomer() {
+		try {
+			customer = searchCustomer.getCustomer();
+		}catch(Exception e1) {
+			
+		}
 	}
 	private void addItem(){
 		SearchItem search = new SearchItem();
@@ -98,14 +115,14 @@ public class MainProgram{
 		while(i.hasNext()) {
 			Item row = i.next();
 			itemArea.append(row.itemName + "\n");
-			priceArea.append(df.format(row.priceOut) + "€\n");
+			priceArea.append(df.format(row.priceOut) + "ï¿½\n");
 			amountArea.append(row.amount + "pcs\n");
 			double totalPrice = row.amount * row.priceOut;
 			finalPrice = finalPrice + totalPrice;
-			totalPriceArea.append(df.format(totalPrice) + "€\n");
+			totalPriceArea.append(df.format(totalPrice) + "â‚¬\n");
 		}
 		if(finalPrice != 0) {
-			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "€");
+			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "ï¿½");
 		}
 	}
 	private void setLayout(){
@@ -164,6 +181,7 @@ public class MainProgram{
 				LocalTime time = LocalTime.now();
 				String timeNow = date.format(df) + " " + time.format(dfTime);
 				timeArea.setText(timeNow);
+				getCustomer();
 			}
 		};
 		Timer t = new Timer(100, updateClockAction);

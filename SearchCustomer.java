@@ -32,7 +32,8 @@ public class SearchCustomer {
 	JButton searchBtn;
 	Font font;
 	Customer customer;
-	SearchCustomer(){
+	
+	SearchCustomer() {
 		frame = new JFrame("Customer search");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(1040,650);
@@ -43,6 +44,7 @@ public class SearchCustomer {
 		searchField = new JTextField();
 		searchBtn = new JButton("Search");
 		font = new Font("Arial",Font.PLAIN,30);
+		customer = null;
 		setLayout();
 		
 		searchField.addKeyListener(new KeyListener() {
@@ -136,6 +138,7 @@ public class SearchCustomer {
 							@Override
 							public void actionPerformed(ActionEvent ec) {
 								customer = c;
+								frame.dispose();
 							}
 						});
 					}
