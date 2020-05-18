@@ -11,16 +11,18 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MainProgram{
-	JFrame frame;
+	JFrame frame,errorFrame;
 	JPanel cont;
 	Font font;
-	JTextArea itemArea,priceArea,amountArea,totalPriceArea;
+	JTextArea itemArea,priceArea,amountArea,totalPriceArea,customerArea;
 	JTextField codeField;
-	JButton customerBtn,itemBtn,deliveryBtn,exitBtn;
-	JLabel infoArea,timeArea,totalPriceLabel;
+	JButton customerBtn,itemBtn,deliveryBtn,exitBtn,errorBtn;
+	JLabel infoArea,timeArea,totalPriceLabel,errorLabel;
+	Item item;
 	List<Item> items;
 	Customer customer;
 	SearchCustomer searchCustomer;
+	SearchItem searchItem;
 	
 	MainProgram(User user){
 		frame = new JFrame("OrderKoistine");
@@ -37,6 +39,7 @@ public class MainProgram{
 		itemArea = new JTextArea();
 		priceArea = new JTextArea();
 		amountArea = new JTextArea();
+		customerArea = new JTextArea("Customer: Not selected");
 		totalPriceArea = new JTextArea();
 		codeField = new JTextField();
 		customerBtn = new JButton("Select customer");
@@ -66,6 +69,14 @@ public class MainProgram{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				searchCustomer = new SearchCustomer();
+				getCustomer();
+			}
+		});
+		itemBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				searchItem = new SearchItem();
+				getItem();
 			}
 		});
 		deliveryBtn.addActionListener(new ActionListener() {
@@ -73,10 +84,10 @@ public class MainProgram{
 			public void actionPerformed(ActionEvent e) {
 				getCustomer();
 				if(customer == null) {
-					System.out.println("Select customer first!");
+					displayError("Customer not selected");
 				}
 				else {
-					System.out.println("Customer: " + customer.name + " selected!");
+					
 				}
 			}
 		});
@@ -92,38 +103,168 @@ public class MainProgram{
 		codeField.requestFocus();
 	}
 	public void getCustomer() {
-		try {
-			customer = searchCustomer.getCustomer();
-		}catch(Exception e1) {
-			
-		}
+		Thread t = new Thread() {
+			public void run() {
+				boolean isCustomer = false;
+				while(isCustomer == false) {
+					try {
+						customer = searchCustomer.getCustomer();
+						if(customer != null) {
+							isCustomer = true;
+							customerArea.setText("Customer: " + customer.name);
+						}
+						Thread.sleep(1000);
+					}catch(Exception e1) {
+					}
+				}
+			}
+		};
+		t.start();
+	}
+	public void getItem() {
+		Thread t = new Thread() {
+			public void run() {
+				boolean isItem = false;
+				while(isItem == false) {
+					try {
+						item = searchItem.getItem();
+						if(item != null) {
+							isItem = true;
+							items.add(item);
+							updateItems();
+						}
+						Thread.sleep(1000);
+					}catch(Exception e1) {
+					}
+				}
+				item = null;
+			}
+		};
+		t.start();
 	}
 	private void addItem(){
-		SearchItem search = new SearchItem();
+		QuickSearch search = new QuickSearch();
 		Item item = search.performSearch(codeField.getText());
-		DecimalFormat df = new DecimalFormat("#.00");
-		double finalPrice = 0;
 		if(item != null) {
 			items.add(item);
 		}
+		updateItems();
+	}
+	private void updateItems() {
+		DecimalFormat df = new DecimalFormat("#.00");
+		double finalPrice = 0;
 		Iterator<Item> i = items.iterator();
 		codeField.setText("");
 		itemArea.setText("");
 		priceArea.setText("");
 		amountArea.setText("");
 		totalPriceArea.setText("");
+		int hPos = 45;
 		while(i.hasNext()) {
+			JButton editBtn = new JButton("Edit");
 			Item row = i.next();
+			editBtn.setBounds(5,hPos,100,32);
+			hPos = hPos + 35;
+			cont.add(editBtn);
 			itemArea.append(row.itemName + "\n");
-			priceArea.append(df.format(row.priceOut) + "�\n");
+			priceArea.append(df.format(row.priceOut) + "€\n");
 			amountArea.append(row.amount + "pcs\n");
 			double totalPrice = row.amount * row.priceOut;
 			finalPrice = finalPrice + totalPrice;
 			totalPriceArea.append(df.format(totalPrice) + "€\n");
+			editBtn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					editRow(row);
+				}
+			});
+			frame.repaint();
 		}
 		if(finalPrice != 0) {
-			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "�");
+			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "€");
 		}
+	}
+	private void editRow(Item item) {
+		JFrame editFrame = new JFrame("Edit row");
+		JPanel editCont = new JPanel();
+		JLabel lName,lPriceOut,lPriceIn,lAmount,lProfit,lDiscount;
+		JTextField tPriceOut,tAmount,tDiscount;
+		JButton editBtn;
+		Font editFont = new Font("Arial",Font.PLAIN,20);
+		editFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		editFrame.setResizable(false);
+		editFrame.setSize(400,170);
+		double profit = item.priceOut - item.priceIn;
+		lName = new JLabel(item.itemName);
+		lPriceOut = new JLabel("€");
+		lPriceIn = new JLabel(item.priceIn + "€");
+		lAmount = new JLabel("pcs.");
+		lProfit = new JLabel("Profit: " + profit + "€");
+		lDiscount = new JLabel("%");
+		tPriceOut = new JTextField("" + item.priceOut);
+		tAmount = new JTextField("" + item.amount);
+		tDiscount = new JTextField("0");
+		editBtn = new JButton("OK");
+		editCont.setLayout(null);
+		
+		lName.setBounds(5,5,400,30);
+		tPriceOut.setBounds(5,40,80,30);
+		lPriceOut.setBounds(85,40,20,30);
+		tDiscount.setBounds(110,40,40,30);
+		lDiscount.setBounds(155,40,20,30);
+		lProfit.setBounds(180,40,120,30);
+		tAmount.setBounds(305,40,40,30);
+		lAmount.setBounds(350,40,50,30);
+		lPriceIn.setBounds(5,80,100,30);
+		editBtn.setBounds(300,80,70,30);
+		
+		lName.setFont(editFont);
+		lPriceOut.setFont(editFont);
+		lPriceIn.setFont(editFont);
+		lAmount.setFont(editFont);
+		lProfit.setFont(editFont);
+		lDiscount.setFont(editFont);
+		tPriceOut.setFont(editFont);
+		tAmount.setFont(editFont);
+		tDiscount.setFont(editFont);
+		editBtn.setFont(editFont);
+		
+		editCont.add(lName);
+		editCont.add(lPriceOut);
+		editCont.add(lPriceIn);
+		editCont.add(lAmount);
+		editCont.add(lProfit);
+		editCont.add(lDiscount);
+		editCont.add(tPriceOut);
+		editCont.add(tAmount);
+		editCont.add(tDiscount);
+		editCont.add(editBtn);
+		editFrame.add(editCont);
+		editFrame.setVisible(true);
+	}
+	private void displayError(String err) {
+		errorFrame = new JFrame("Error");
+		errorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		errorFrame.setResizable(false);
+		errorFrame.setSize(400,150);
+		errorFrame.setLayout(null);
+		errorLabel = new JLabel(err);
+		errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		errorBtn = new JButton("Ok");
+		errorLabel.setBounds(5,5,390,40);
+		errorBtn.setBounds(150,60,100,40);
+		errorLabel.setFont(font);
+		errorBtn.setFont(font);
+		errorFrame.add(errorLabel);
+		errorFrame.add(errorBtn);
+		errorFrame.setVisible(true);
+		errorFrame.getRootPane().setDefaultButton(errorBtn);
+		errorBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				errorFrame.dispose();
+			}
+		});
 	}
 	private void setLayout(){
 		//Set fonts
@@ -133,6 +274,7 @@ public class MainProgram{
 		priceArea.setFont(font);
 		amountArea.setFont(font);
 		totalPriceArea.setFont(font);
+		customerArea.setFont(new Font("Arial",Font.ITALIC,30));
 		itemBtn.setFont(font);
 		deliveryBtn.setFont(font);
 		exitBtn.setFont(font);
@@ -140,25 +282,28 @@ public class MainProgram{
 		timeArea.setFont(font);
 		totalPriceLabel.setFont(font);
 		
-		
 		//Set sizes
-		itemArea.setBounds(5,5,1405,800);
-		priceArea.setBounds(1410,5,200,800);
-		amountArea.setBounds(1610,5,100,800);
-		totalPriceArea.setBounds(1710,5,200,800);
+		customerArea.setBounds(5,5,1905,35);
+		itemArea.setBounds(105,45,1305,760);
+		priceArea.setBounds(1410,45,200,760);
+		amountArea.setBounds(1610,45,100,760);
+		totalPriceArea.setBounds(1710,45,300,760);
 		codeField.setBounds(5,810,1600,40);
 		customerBtn.setBounds(5,850,250,140);
 		itemBtn.setBounds(260,850,250,140);
 		deliveryBtn.setBounds(1410,850,250,140);
 		exitBtn.setBounds(1665,850,250,140);
-		totalPriceLabel.setBounds(1610,810,200,40);
+		totalPriceLabel.setBounds(1610,810,300,40);
 		infoArea.setBounds(515,860,885,70);
 		infoArea.setHorizontalAlignment(SwingConstants.CENTER);
 		timeArea.setBounds(515,900,885,70);
 		timeArea.setHorizontalAlignment(SwingConstants.CENTER);
 		itemArea.setEditable(false);
+		customerArea.setEditable(false);
+		
 		
 		//Add elements
+		cont.add(customerArea);
 		cont.add(itemArea);
 		cont.add(priceArea);
 		cont.add(amountArea);
@@ -181,7 +326,6 @@ public class MainProgram{
 				LocalTime time = LocalTime.now();
 				String timeNow = date.format(df) + " " + time.format(dfTime);
 				timeArea.setText(timeNow);
-				getCustomer();
 			}
 		};
 		Timer t = new Timer(100, updateClockAction);
