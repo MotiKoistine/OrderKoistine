@@ -187,35 +187,69 @@ public class MainProgram{
 	private void editRow(Item item) {
 		JFrame editFrame = new JFrame("Edit row");
 		JPanel editCont = new JPanel();
-		JLabel lName,lPriceOut,lPriceIn,lAmount,lProfit,lDiscount;
+		JLabel lName,lPriceOut,lPriceIn,lAmount,lProfit,lDiscount,lDiscountP;
 		JTextField tPriceOut,tAmount,tDiscount;
 		JButton editBtn;
+		double profit = item.priceOut - item.priceIn;
+		int[] numbers = {KeyEvent.VK_NUMPAD0,KeyEvent.VK_NUMPAD1,KeyEvent.VK_NUMPAD2,KeyEvent.VK_NUMPAD3,KeyEvent.VK_NUMPAD4,
+				KeyEvent.VK_NUMPAD5,KeyEvent.VK_NUMPAD6,KeyEvent.VK_NUMPAD7,KeyEvent.VK_NUMPAD8,KeyEvent.VK_NUMPAD9,KeyEvent.VK_BACK_SPACE};
 		Font editFont = new Font("Arial",Font.PLAIN,20);
 		editFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		editFrame.setResizable(false);
 		editFrame.setSize(400,170);
-		double profit = item.priceOut - item.priceIn;
 		lName = new JLabel(item.itemName);
 		lPriceOut = new JLabel("€");
 		lPriceIn = new JLabel(item.priceIn + "€");
 		lAmount = new JLabel("pcs.");
-		lProfit = new JLabel("Profit: " + profit + "€");
-		lDiscount = new JLabel("%");
+		lProfit = new JLabel("Profit:" + profit + "€");
+		tDiscount = new JTextField("0,00");
+		lDiscount = new JLabel("Discount:");
+		lDiscountP = new JLabel("%");
 		tPriceOut = new JTextField("" + item.priceOut);
 		tAmount = new JTextField("" + item.amount);
-		tDiscount = new JTextField("0");
 		editBtn = new JButton("OK");
 		editCont.setLayout(null);
+		tPriceOut.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				for(int i : numbers) {
+					if(e.getKeyCode() == i) {
+						if(!tPriceOut.getText().isEmpty()) {
+							DecimalFormat df = new DecimalFormat("0.00");
+							double discount = item.priceOut;
+							try{
+								discount = (item.priceOut - Double.parseDouble(tPriceOut.getText())) / item.priceOut * 100;
+							}catch(Exception e1) {}
+							tDiscount.setText(""+df.format(discount));
+							double profitChange = Double.parseDouble(tPriceOut.getText()) - item.priceIn;
+							lProfit.setText("Profit:" + profitChange + "€");
+						}
+					}
+				}
+				if(e.getKeyCode() == KeyEvent.VK_COMMA || e.getKeyCode() == KeyEvent.VK_DECIMAL) {
+					String field = tPriceOut.getText();
+					field = field.replace(',', '.');
+					tPriceOut.setText(field);
+				}
+			}
+		});
 		
 		lName.setBounds(5,5,400,30);
 		tPriceOut.setBounds(5,40,80,30);
 		lPriceOut.setBounds(85,40,20,30);
-		tDiscount.setBounds(110,40,40,30);
-		lDiscount.setBounds(155,40,20,30);
-		lProfit.setBounds(180,40,120,30);
+		lDiscount.setBounds(110,40,100,30);
+		tDiscount.setBounds(195,40,60,30);
+		lDiscountP.setBounds(255,40,20,30);
 		tAmount.setBounds(305,40,40,30);
 		lAmount.setBounds(350,40,50,30);
 		lPriceIn.setBounds(5,80,100,30);
+		lProfit.setBounds(110,80,200,30);
 		editBtn.setBounds(300,80,70,30);
 		
 		lName.setFont(editFont);
@@ -224,6 +258,7 @@ public class MainProgram{
 		lAmount.setFont(editFont);
 		lProfit.setFont(editFont);
 		lDiscount.setFont(editFont);
+		lDiscountP.setFont(editFont);
 		tPriceOut.setFont(editFont);
 		tAmount.setFont(editFont);
 		tDiscount.setFont(editFont);
@@ -235,6 +270,7 @@ public class MainProgram{
 		editCont.add(lAmount);
 		editCont.add(lProfit);
 		editCont.add(lDiscount);
+		editCont.add(lDiscountP);
 		editCont.add(tPriceOut);
 		editCont.add(tAmount);
 		editCont.add(tDiscount);

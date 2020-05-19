@@ -121,7 +121,7 @@ public class SearchItem {
 						double ipriceout = itemObject.getDouble("priceout");
 						double ipricein = itemObject.getDouble("pricein");
 						int iamount = 1;
-						items.add(new Item(iid,iname,ipriceout,ipricein,iamount));
+						items.add(new Item(iid,iname,ipriceout,ipricein,ipriceout,iamount));
 						
 					}
 					itemArea.setText("");
