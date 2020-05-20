@@ -319,20 +319,24 @@ public class MainProgram{
 		totalPriceLabel.setFont(font);
 		
 		//Set sizes
-		customerArea.setBounds(5,5,1905,35);
-		itemArea.setBounds(105,45,1305,760);
-		priceArea.setBounds(1410,45,200,760);
-		amountArea.setBounds(1610,45,100,760);
-		totalPriceArea.setBounds(1710,45,300,760);
-		codeField.setBounds(5,810,1600,40);
-		customerBtn.setBounds(5,850,250,140);
-		itemBtn.setBounds(260,850,250,140);
-		deliveryBtn.setBounds(1410,850,250,140);
-		exitBtn.setBounds(1665,850,250,140);
-		totalPriceLabel.setBounds(1610,810,300,40);
-		infoArea.setBounds(515,860,885,70);
+		int windowW = frame.getWidth();
+		int windowH = frame.getHeight();
+		windowW = 1920 - windowW;
+		windowH = 1080 - windowH;
+		customerArea.setBounds(5,5,1905-windowW,35);
+		itemArea.setBounds(105,45,1305-windowW,760-windowH);
+		priceArea.setBounds(1410-windowW,45,200,760-windowH);
+		amountArea.setBounds(1610-windowW,45,100,760-windowH);
+		totalPriceArea.setBounds(1710-windowW,45,200,760-windowH);
+		codeField.setBounds(5,810-windowH,1600-windowW,40);
+		customerBtn.setBounds(5,850-windowH,250,140);
+		itemBtn.setBounds(260,850-windowH,250,140);
+		deliveryBtn.setBounds(1410-windowW,850-windowH,250,140);
+		exitBtn.setBounds(1665-windowW,850-windowH,250,140);
+		totalPriceLabel.setBounds(1610-windowW,810-windowH,300,40);
+		infoArea.setBounds(515,860-windowH,885-windowW,70);
 		infoArea.setHorizontalAlignment(SwingConstants.CENTER);
-		timeArea.setBounds(515,900,885,70);
+		timeArea.setBounds(515,900-windowH,885-windowW,70);
 		timeArea.setHorizontalAlignment(SwingConstants.CENTER);
 		itemArea.setEditable(false);
 		customerArea.setEditable(false);
