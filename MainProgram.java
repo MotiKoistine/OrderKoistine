@@ -170,20 +170,21 @@ public class MainProgram{
 		while(i.hasNext()) {
 			JButton editBtn = new JButton("Edit");
 			Item row = i.next();
+			row.pos = pos;
 			editBtn.setBounds(5,hPos,100,32);
 			hPos = hPos + 35;
 			cont.add(editBtn);
 			itemArea.append(row.itemName + "\n");
-			priceArea.append(df.format(row.priceOut) + "€\n");
+			priceArea.append(df.format(row.priceEdit) + "€\n");
 			amountArea.append(row.amount + "pcs\n");
-			double totalPrice = row.amount * row.priceOut;
+			double totalPrice = row.amount * row.priceEdit;
 			finalPrice = finalPrice + totalPrice;
 			totalPriceArea.append(df.format(totalPrice) + "€\n");
 			editBtn.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					editRow = new EditRow(row);
-					getRow(pos-1);
+					getRow(row.pos);
 				}
 			});
 			frame.repaint();

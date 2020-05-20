@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 
 public class EditRow {
 	DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
+	DecimalFormat df;
 	JFrame editFrame;
 	JPanel editCont;
 	JLabel lName,lPriceOut,lPriceIn,lAmount,lProfit,lDiscount,lDiscountP;
@@ -22,17 +23,19 @@ public class EditRow {
 	JButton editBtn;
 	Font editFont;
 	Item item;
+	double discount;
 	double profit;
 	boolean edited;
 	EditRow(Item item){
 		this.item = item;
 		editFrame = new JFrame("Edit row");
 		editCont = new JPanel();
-		profit = item.priceOut - item.priceIn;
+		profit = item.priceEdit - item.priceIn;
 		edited = false;
+		discount = (item.priceOut - item.priceEdit) / item.priceOut * 100;
 		int[] numbers = {KeyEvent.VK_NUMPAD0,KeyEvent.VK_NUMPAD1,KeyEvent.VK_NUMPAD2,KeyEvent.VK_NUMPAD3,KeyEvent.VK_NUMPAD4,
 				KeyEvent.VK_NUMPAD5,KeyEvent.VK_NUMPAD6,KeyEvent.VK_NUMPAD7,KeyEvent.VK_NUMPAD8,KeyEvent.VK_NUMPAD9,KeyEvent.VK_BACK_SPACE};
-		DecimalFormat df = new DecimalFormat("0.00",formatSymbols);
+		df = new DecimalFormat("0.00",formatSymbols);
 		editFont = new Font("Arial",Font.PLAIN,20);
 		editFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		editFrame.setResizable(false);
@@ -50,7 +53,7 @@ public class EditRow {
 				for(int i : numbers) {
 					if(e.getKeyCode() == i) {
 						if(!tPriceOut.getText().isEmpty()) {
-							double discount = item.priceOut;
+							discount = item.priceOut;
 							try{
 								discount = (item.priceOut - Double.parseDouble(tPriceOut.getText())) / item.priceOut * 100;
 							}catch(Exception e1) {}
@@ -83,7 +86,7 @@ public class EditRow {
 					if(e.getKeyCode() == i) {
 						if(!tDiscount.getText().isEmpty()) {
 							try{
-								double discount = Double.parseDouble(tDiscount.getText());
+								discount = Double.parseDouble(tDiscount.getText());
 								double price = item.priceOut * ((100 - discount) / 100);
 								tPriceOut.setText(""+df.format(price));
 							}catch(Exception e1) {
@@ -147,10 +150,10 @@ public class EditRow {
 		lPriceIn = new JLabel(item.priceIn + "€");
 		lAmount = new JLabel("pcs.");
 		lProfit = new JLabel("Profit:" + profit + "€");
-		tDiscount = new JTextField("0.00");
+		tDiscount = new JTextField("" + df.format(discount));
 		lDiscount = new JLabel("Discount:");
 		lDiscountP = new JLabel("%");
-		tPriceOut = new JTextField("" + item.priceOut);
+		tPriceOut = new JTextField("" + item.priceEdit);
 		tAmount = new JTextField("" + item.amount);
 		editBtn = new JButton("OK");
 		editCont.setLayout(null);

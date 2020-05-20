@@ -55,7 +55,7 @@ public class QuickSearch {
 			
 		}
 		if(!obj.isNull("itemid")) {
-			item = new Item(Integer.parseInt(obj.getString("itemid")),obj.getString("item"),obj.getDouble("priceout"),obj.getDouble("pricein"),obj.getDouble("priceout"),1);
+			item = new Item(Integer.parseInt(obj.getString("itemid")),obj.getString("item"),obj.getDouble("priceout"),obj.getDouble("pricein"),obj.getDouble("priceout"),1,0);
 		}
 		http.disconnect();
 		return item;
