@@ -26,6 +26,7 @@ public class MainProgram{
 	Customer customer;
 	SearchCustomer searchCustomer;
 	SearchItem searchItem;
+	SelectDelivery selectDelivery;
 	DecimalFormatSymbols formatSymbols;
 	int pos;
 	
@@ -59,6 +60,9 @@ public class MainProgram{
 		setLayout();
 		displayInfo();
 		
+		// For testing
+		testFill();
+		
 		codeField.addKeyListener(new KeyListener(){
 			@Override
 			public void keyTyped(KeyEvent e){}
@@ -88,12 +92,16 @@ public class MainProgram{
 		deliveryBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getCustomer();
 				if(customer == null) {
 					displayError("Customer not selected");
 				}
 				else {
-					
+					if(!items.isEmpty()) {
+						selectDelivery = new SelectDelivery(items);
+					}
+					else {
+						displayError("No items selecter");
+					}
 				}
 			}
 		});
@@ -305,5 +313,13 @@ public class MainProgram{
 		};
 		Timer t = new Timer(100, updateClockAction);
 		t.start();
+	}
+	private void testFill() {
+		customer = new Customer(5,"Yeet Make", "Yeetkatu 13", "00690", "YeetCity", "070013212", "stadinkingi72@gmail.com");
+		customerArea.setText("Customer: " + customer.name);
+		items.add(new Item(15, "Holset HX40 Super", 899, 652,850,1,0));
+		items.add(new Item(17, "M50B25 T4 exhaust manifold", 750, 450,750,1,1));
+		items.add(new Item(18, "Siemens Deka 2000cc injector", 140,85,100,6,2));
+		updateItems();
 	}
 }

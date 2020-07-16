@@ -131,8 +131,8 @@ public class SearchCustomer {
 						customerArea.append(c.customerid + " " + c.name + " " + c.phone + "\n");
 						JButton cSelect = new JButton("Select");
 						cont.add(cSelect);
+						cSelect.setFont(font);
 						cSelect.setBounds(824,hPos,200,35);
-						cont.revalidate();
 						hPos = hPos + 40;
 						cSelect.addActionListener(new ActionListener() {
 							@Override
@@ -144,7 +144,6 @@ public class SearchCustomer {
 					}
 				}
 			}catch(Exception e) {
-				System.out.println(e.getMessage());
 			}
 		}
 		

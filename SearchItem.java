@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,6 +35,7 @@ public class SearchItem {
 	JButton searchBtn;
 	Font font;
 	Item item;
+	DecimalFormatSymbols formatSymbols;
 	
 	SearchItem() {
 		frame = new JFrame("Item search");
@@ -45,6 +48,7 @@ public class SearchItem {
 		searchField = new JTextField();
 		searchBtn = new JButton("Search");
 		font = new Font("Arial",Font.PLAIN,30);
+		formatSymbols = new DecimalFormatSymbols(Locale.US);
 		item = null;
 		setLayout();
 		
@@ -126,13 +130,13 @@ public class SearchItem {
 					}
 					itemArea.setText("");
 					int hPos = 5;
-					DecimalFormat df = new DecimalFormat("#.00");
+					DecimalFormat df = new DecimalFormat("#.00",formatSymbols);
 					for(Item i : items) {
 						itemArea.append(i.itemId + " " + i.itemName + " " + df.format(i.priceOut) + "€\n");
 						JButton iSelect = new JButton("Select");
 						cont.add(iSelect);
+						iSelect.setFont(font);
 						iSelect.setBounds(824,hPos,200,35);
-						cont.revalidate();
 						hPos = hPos + 40;
 						iSelect.addActionListener(new ActionListener() {
 							@Override
