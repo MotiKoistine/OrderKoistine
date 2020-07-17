@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -59,7 +60,7 @@ public class SelectDelivery {
 		JSONTokener token;
 		JSONObject obj = null;
 		try {
-			URL url = new URL("http://koistine.com/OrderApi/delivery.php");
+			URL url = new URL("http://koistine.com/OrderKoistine/v1/");
 			URLConnection con = url.openConnection();
 			http = (HttpURLConnection)con;
 			http.setRequestMethod("POST");
@@ -70,8 +71,12 @@ public class SelectDelivery {
 		if(http != null) {
 			Map<String,String> map = new HashMap<>();
 			map.put("userid","80085y4y");
-			String sj = "userid=" + map.get("userid");
-			byte[] out = sj.getBytes();
+			map.put("search_type","delivery");
+			StringJoiner sj = new StringJoiner("&");
+			for(Map.Entry<String,String> entry : map.entrySet()) {
+				sj.add(entry.getKey() + "=" + entry.getValue());
+			}
+			byte[] out = sj.toString().getBytes();
 			int length = out.length;
 			try {
 				http.setFixedLengthStreamingMode(length);

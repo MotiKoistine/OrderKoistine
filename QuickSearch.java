@@ -19,7 +19,7 @@ public class QuickSearch {
 	HttpURLConnection http;
 	QuickSearch(){
 		try {
-			url = new URL("http://koistine.com/OrderApi/items.php");
+			url = new URL("http://koistine.com/OrderKoistine/v1/");
 			con = url.openConnection();
 			http = (HttpURLConnection)con;
 			http.setRequestMethod("POST");
@@ -32,11 +32,12 @@ public class QuickSearch {
 	}
 	public Item performSearch(String search){
 		Item item = null;
-		Map<String, String> arg = new HashMap<>();
-		arg.put("userid","80085y4y");
-		arg.put("code",search);
+		Map<String, String> map = new HashMap<>();
+		map.put("userid","80085y4y");
+		map.put("code",search);
+		map.put("search_type","code");
 		StringJoiner sj = new StringJoiner("&");
-		for(Map.Entry<String, String> entry : arg.entrySet()) {
+		for(Map.Entry<String, String> entry : map.entrySet()) {
 			sj.add(entry.getKey() + "=" + entry.getValue());
 		}
 		byte[] out = sj.toString().getBytes();

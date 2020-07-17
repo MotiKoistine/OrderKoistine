@@ -88,7 +88,7 @@ public class SearchItem {
 		JSONObject obj = null;
 		JSONTokener token;
 		try {
-			URL url = new URL("http://koistine.com/OrderApi/items.php");
+			URL url = new URL("http://koistine.com/OrderKoistine/v1/");
 			URLConnection con = url.openConnection();
 			http = (HttpURLConnection)con;
 			http.setRequestMethod("POST");
@@ -100,6 +100,7 @@ public class SearchItem {
 			Map<String,String> map = new HashMap<>();
 			map.put("userid","80085y4y");
 			map.put("search",search);
+			map.put("search_type", "item");
 			StringJoiner sj = new StringJoiner("&");
 			for(Map.Entry<String, String> entry : map.entrySet()) {
 				sj.add(entry.getKey() + "=" + entry.getValue());
