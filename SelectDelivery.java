@@ -119,6 +119,7 @@ public class SelectDelivery {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					delivery = dP;
+					new DisplayTotal(items, delivery);
 				}
 			});
 		}
@@ -126,7 +127,7 @@ public class SelectDelivery {
 	private void setLayout() {
 		deliveryArea.setFont(font);
 		
-		deliveryArea.setBounds(5,5,814,550);
+		deliveryArea.setBounds(5,5,814,590);
 		
 		cont.add(deliveryArea);
 	}
