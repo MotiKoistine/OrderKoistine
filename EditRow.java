@@ -59,8 +59,11 @@ public class EditRow {
 							}catch(Exception e1) {}
 							tDiscount.setText(""+df.format(discount));
 							int amount = Integer.parseInt(tAmount.getText());
-							double profitChange = (Double.parseDouble(tPriceOut.getText()) - item.priceIn) * amount;
-							lProfit.setText("Profit:" + profitChange + "€");
+							double profitChange = 0;
+							try{
+								profitChange = (Double.parseDouble(tPriceOut.getText()) - item.priceIn) * amount;
+							}catch(Exception e1) {}
+							lProfit.setText("Profit:" + df.format(profitChange) + "€");
 						}
 					}
 				}

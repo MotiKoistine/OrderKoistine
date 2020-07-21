@@ -30,7 +30,7 @@ import org.json.JSONTokener;
 public class SearchItem {
 	JFrame frame;
 	JPanel cont;
-	JTextArea itemArea;
+	JTextArea itemArea,priceArea;
 	JTextField searchField;
 	JButton searchBtn;
 	Font font;
@@ -45,6 +45,8 @@ public class SearchItem {
 		cont.setLayout(null);
 		itemArea = new JTextArea();
 		itemArea.setEditable(false);
+		priceArea = new JTextArea();
+		priceArea.setEditable(false);
 		searchField = new JTextField();
 		searchBtn = new JButton("Search");
 		font = new Font("Arial",Font.PLAIN,30);
@@ -73,16 +75,13 @@ public class SearchItem {
 			}
 		});
 		
-		
-		cont.add(itemArea);
-		cont.add(searchField);
-		cont.add(searchBtn);
-		
 		frame.add(cont);
 		frame.setVisible(true);
 		searchField.requestFocus();
 	}
 	private void performSearch(String search) {
+		itemArea.setText("");
+		priceArea.setText("");
 		List<Item> items = new ArrayList<>();
 		HttpURLConnection http = null;
 		JSONObject obj = null;
@@ -133,7 +132,8 @@ public class SearchItem {
 					int hPos = 5;
 					DecimalFormat df = new DecimalFormat("#.00",formatSymbols);
 					for(Item i : items) {
-						itemArea.append(i.itemId + " " + i.itemName + " " + df.format(i.priceOut) + "€\n");
+						itemArea.append(i.itemId + " " + i.itemName + "\n");
+						priceArea.append(df.format(i.priceOut) + "€\n");
 						JButton iSelect = new JButton("Select");
 						cont.add(iSelect);
 						iSelect.setFont(font);
@@ -158,11 +158,18 @@ public class SearchItem {
 	}
 	private void setLayout() {
 		itemArea.setFont(font);
+		priceArea.setFont(font);
 		searchField.setFont(font);
 		searchBtn.setFont(font);
 		
-		itemArea.setBounds(5,5,814,550);
+		itemArea.setBounds(5,5,610,550);
+		priceArea.setBounds(615,5,200,550);
 		searchField.setBounds(5,560,814,40);
 		searchBtn.setBounds(819,560,200,40);
+		
+		cont.add(itemArea);
+		cont.add(priceArea);
+		cont.add(searchField);
+		cont.add(searchBtn);
 	}
 }

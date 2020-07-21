@@ -1,6 +1,8 @@
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Iterator;
@@ -18,6 +20,8 @@ import javax.swing.SwingConstants;
 public class DisplayTotal {
 	List<Item> items;
 	DeliveryOption deliveryOption;
+	User user;
+	Customer customer;
 	JFrame frame;
 	JPanel cont;
 	Font font;
@@ -30,9 +34,11 @@ public class DisplayTotal {
 	int height;
 	
 	
-	DisplayTotal(List<Item> items, DeliveryOption deliveryOption){
+	DisplayTotal(List<Item> items, DeliveryOption deliveryOption, User user, Customer customer){
 		this.items = items;
 		this.deliveryOption = deliveryOption;
+		this.user = user;
+		this.customer = customer;
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		height = (int)screenSize.getHeight();
 		frame = new JFrame("Total");
@@ -56,6 +62,13 @@ public class DisplayTotal {
 		dF = new DecimalFormat("0.00",formatSymbols);
 		setLayout();
 		displayTotal();
+		
+		submit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new InsertOrder(items,customer.customerid,deliveryOption.id,user.userId);
+			}
+		});
 		
 		frame.setVisible(true);
 	}

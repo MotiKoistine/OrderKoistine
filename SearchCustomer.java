@@ -27,7 +27,7 @@ import org.json.JSONTokener;
 public class SearchCustomer {
 	JFrame frame;
 	JPanel cont;
-	JTextArea customerArea;
+	JTextArea customerArea,customerIdArea,customerPhoneArea;
 	JTextField searchField;
 	JButton searchBtn;
 	Font font;
@@ -41,6 +41,10 @@ public class SearchCustomer {
 		cont.setLayout(null);
 		customerArea = new JTextArea();
 		customerArea.setEditable(false);
+		customerIdArea = new JTextArea();
+		customerIdArea.setEditable(false);
+		customerPhoneArea = new JTextArea();
+		customerPhoneArea.setEditable(false);
 		searchField = new JTextField();
 		searchBtn = new JButton("Search");
 		font = new Font("Arial",Font.PLAIN,30);
@@ -68,16 +72,14 @@ public class SearchCustomer {
 			}
 		});
 		
-		
-		cont.add(customerArea);
-		cont.add(searchField);
-		cont.add(searchBtn);
-		
 		frame.add(cont);
 		frame.setVisible(true);
 		searchField.requestFocus();
 	}
 	private void performSearch(String search) {
+		customerIdArea.setText("");
+		customerArea.setText("");
+		customerPhoneArea.setText("");
 		List<Customer> customers = new ArrayList<>();
 		HttpURLConnection http = null;
 		JSONObject obj = null;
@@ -129,7 +131,9 @@ public class SearchCustomer {
 					customerArea.setText("");
 					int hPos = 5;
 					for(Customer c : customers) {
-						customerArea.append(c.customerid + " " + c.name + " " + c.phone + "\n");
+						customerIdArea.append(c.customerid + "\n");
+						customerArea.append(c.name + "\n");
+						customerPhoneArea.append(c.phone + "\n");
 						JButton cSelect = new JButton("Select");
 						cont.add(cSelect);
 						cSelect.setFont(font);
@@ -155,11 +159,21 @@ public class SearchCustomer {
 	}
 	private void setLayout() {
 		customerArea.setFont(font);
+		customerIdArea.setFont(font);
+		customerPhoneArea.setFont(font);
 		searchField.setFont(font);
 		searchBtn.setFont(font);
 		
-		customerArea.setBounds(5,5,814,550);
+		customerIdArea.setBounds(5,5,100,550);
+		customerArea.setBounds(105,5,300,550);
+		customerPhoneArea.setBounds(405,5,409,550);
 		searchField.setBounds(5,560,814,40);
 		searchBtn.setBounds(819,560,200,40);
+		
+		cont.add(customerIdArea);
+		cont.add(customerArea);
+		cont.add(customerPhoneArea);
+		cont.add(searchField);
+		cont.add(searchBtn);
 	}
 }

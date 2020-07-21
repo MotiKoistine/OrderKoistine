@@ -97,7 +97,7 @@ public class MainProgram{
 				}
 				else {
 					if(!items.isEmpty()) {
-						selectDelivery = new SelectDelivery(items);
+						selectDelivery = new SelectDelivery(items,user,customer);
 					}
 					else {
 						displayError("No items selecter");
