@@ -8,9 +8,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainProgram{
 	JFrame frame,errorFrame;
@@ -28,6 +30,7 @@ public class MainProgram{
 	SearchItem searchItem;
 	SelectDelivery selectDelivery;
 	DecimalFormatSymbols formatSymbols;
+	Map<Integer,JButton> editButtons;
 	int pos;
 	
 	MainProgram(User user){
@@ -42,6 +45,7 @@ public class MainProgram{
 		cont.setLayout(null);
 		items = new ArrayList<Item>();
 		formatSymbols = new DecimalFormatSymbols(Locale.US);
+		editButtons = new HashMap<Integer,JButton>();
 		
 		itemArea = new JTextArea();
 		priceArea = new JTextArea();
@@ -165,7 +169,7 @@ public class MainProgram{
 		updateItems();
 	}
 	private void updateItems() {
-		DecimalFormat df = new DecimalFormat("#.00",formatSymbols);
+		DecimalFormat df = new DecimalFormat("0.00",formatSymbols);
 		double finalPrice = 0;
 		Iterator<Item> i = items.iterator();
 		codeField.setText("");
@@ -176,27 +180,38 @@ public class MainProgram{
 		int hPos = 45;
 		pos = 0;
 		while(i.hasNext()) {
-			JButton editBtn = new JButton("Edit");
 			Item row = i.next();
 			row.pos = pos;
-			editBtn.setBounds(5,hPos,100,32);
-			hPos = hPos + 35;
-			cont.add(editBtn);
-			itemArea.append(row.itemName + "\n");
-			priceArea.append(df.format(row.priceEdit) + "€\n");
-			amountArea.append(row.amount + "pcs\n");
-			double totalPrice = row.amount * row.priceEdit;
-			finalPrice = finalPrice + totalPrice;
-			totalPriceArea.append(df.format(totalPrice) + "€\n");
-			editBtn.addActionListener(new ActionListener() {
+
+			editButtons.put(row.itemId,new JButton("Edit"));
+			cont.add(editButtons.get(row.itemId));
+			editButtons.get(row.itemId).setBounds(5,hPos,100,32);
+			editButtons.get(row.itemId).addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					editRow = new EditRow(row);
 					getRow(row.pos);
 				}
 			});
-			frame.repaint();
-			pos++;
+			
+			if(row.amount == 0) {
+				editButtons.remove(row.itemId);
+				cont.remove(editButtons.get(row.itemId));
+				items.remove(row.pos);
+				frame.repaint();
+				updateItems();
+			}
+			else {
+				hPos = hPos + 35;
+
+				itemArea.append(row.itemName + "\n");
+				priceArea.append(df.format(row.priceEdit) + "€\n");
+				amountArea.append(row.amount + "pcs\n");
+				double totalPrice = row.amount * row.priceEdit;
+				finalPrice = finalPrice + totalPrice;
+				totalPriceArea.append(df.format(totalPrice) + "€\n");
+				pos++;
+			}
 		}
 		if(finalPrice != 0) {
 			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "€");
@@ -283,6 +298,9 @@ public class MainProgram{
 		timeArea.setHorizontalAlignment(SwingConstants.CENTER);
 		itemArea.setEditable(false);
 		customerArea.setEditable(false);
+		priceArea.setEditable(false);
+		amountArea.setEditable(false);
+		totalPriceArea.setEditable(false);
 		
 		
 		//Add elements
