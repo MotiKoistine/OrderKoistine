@@ -31,6 +31,7 @@ public class MainProgram{
 	SelectDelivery selectDelivery;
 	DecimalFormatSymbols formatSymbols;
 	Map<Integer,JButton> editButtons;
+	Map<Integer,JButton> deleteButtons;
 	int pos;
 	
 	MainProgram(User user){
@@ -46,6 +47,7 @@ public class MainProgram{
 		items = new ArrayList<Item>();
 		formatSymbols = new DecimalFormatSymbols(Locale.US);
 		editButtons = new HashMap<Integer,JButton>();
+		deleteButtons = new HashMap<Integer,JButton>();
 		
 		itemArea = new JTextArea();
 		priceArea = new JTextArea();
@@ -182,40 +184,63 @@ public class MainProgram{
 		while(i.hasNext()) {
 			Item row = i.next();
 			row.pos = pos;
+			if(!editButtons.containsKey(row.itemId)) {
+				editButtons.put(row.itemId,new JButton("Edit"));
+				deleteButtons.put(row.itemId,new JButton("Delete"));
+				cont.add(editButtons.get(row.itemId));
+				cont.add(deleteButtons.get(row.itemId));
 
-			editButtons.put(row.itemId,new JButton("Edit"));
-			cont.add(editButtons.get(row.itemId));
-			editButtons.get(row.itemId).setBounds(5,hPos,100,32);
-			editButtons.get(row.itemId).addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					editRow = new EditRow(row);
-					getRow(row.pos);
-				}
-			});
+				editButtons.get(row.itemId).addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						editRow = new EditRow(row);
+						getRow(row.pos);
+					}
+				});
+				deleteButtons.get(row.itemId).addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						deleteRow(row);
+					}
+				});
+
+				editButtons.get(row.itemId).setBounds(5,hPos,75,32);
+				deleteButtons.get(row.itemId).setBounds(80,hPos,75,32);
+			}
 			
-			if(row.amount == 0) {
-				editButtons.remove(row.itemId);
-				cont.remove(editButtons.get(row.itemId));
-				items.remove(row.pos);
-				frame.repaint();
-				updateItems();
-			}
-			else {
-				hPos = hPos + 35;
+			hPos = hPos + 35;
 
-				itemArea.append(row.itemName + "\n");
-				priceArea.append(df.format(row.priceEdit) + "€\n");
-				amountArea.append(row.amount + "pcs\n");
-				double totalPrice = row.amount * row.priceEdit;
-				finalPrice = finalPrice + totalPrice;
-				totalPriceArea.append(df.format(totalPrice) + "€\n");
-				pos++;
-			}
+			itemArea.append(row.itemName + "\n");
+			priceArea.append(df.format(row.priceEdit) + "€\n");
+			amountArea.append(row.amount + "pcs\n");
+			double totalPrice = row.amount * row.priceEdit;
+			finalPrice = finalPrice + totalPrice;
+			totalPriceArea.append(df.format(totalPrice) + "€\n");
+			pos++;
 		}
 		if(finalPrice != 0) {
 			totalPriceLabel.setText("Total: " + df.format(finalPrice) + "€");
+		}else {
+			totalPriceLabel.setText("Total: 0.00€");
 		}
+	}
+	private void deleteRow(Item row) {
+		int x = 0;
+		cont.remove(deleteButtons.get(row.itemId));
+		cont.remove(editButtons.get(row.itemId));
+		items.remove(row.pos);
+		for(Item i : items) {
+			i.pos = x;
+			items.set(x, i);
+			cont.remove(deleteButtons.get(i.itemId));
+			cont.remove(editButtons.get(i.itemId));
+			x++;
+		}
+		deleteButtons.clear();
+		editButtons.clear();
+		cont.revalidate();
+		cont.repaint();
+		updateItems();
 	}
 	private void getRow(int rowPos) {
 		Thread t = new Thread() {
@@ -282,7 +307,7 @@ public class MainProgram{
 		windowW = 1920 - windowW;
 		windowH = 1080 - windowH;
 		customerArea.setBounds(5,5,1905-windowW,35);
-		itemArea.setBounds(105,45,1305-windowW,760-windowH);
+		itemArea.setBounds(155,45,1255-windowW,760-windowH);
 		priceArea.setBounds(1410-windowW,45,200,760-windowH);
 		amountArea.setBounds(1610-windowW,45,100,760-windowH);
 		totalPriceArea.setBounds(1710-windowW,45,200,760-windowH);
