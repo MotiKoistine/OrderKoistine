@@ -98,7 +98,7 @@ public class Login{
 			else if(obj.getString("login").equals("true")) {
 				user.username = obj.getString("username");
 				user.userId = obj.getInt("userid");
-				new MainProgram(user);
+				new Menu(user);
 				frame.dispose();
 			}
 			http.disconnect();
