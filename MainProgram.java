@@ -33,6 +33,7 @@ public class MainProgram{
 	Map<Integer,JButton> editButtons;
 	Map<Integer,JButton> deleteButtons;
 	int pos;
+	CheckOrder checkOrder;
 	
 	MainProgram(User user){
 		frame = new JFrame("OrderKoistine");
@@ -67,7 +68,7 @@ public class MainProgram{
 		displayInfo();
 		
 		// For testing
-		testFill();
+		//testFill();
 		
 		codeField.addKeyListener(new KeyListener(){
 			@Override
@@ -103,7 +104,9 @@ public class MainProgram{
 				}
 				else {
 					if(!items.isEmpty()) {
-						selectDelivery = new SelectDelivery(items,user,customer);
+						checkOrder = new CheckOrder();
+						selectDelivery = new SelectDelivery(items,user,customer,checkOrder);
+						checkOrder();
 					}
 					else {
 						displayError("No items selecter");
@@ -261,6 +264,37 @@ public class MainProgram{
 		};
 		t.start();
 	}
+	private void resetView() {
+		customer = null;
+		customerArea.setText("Customer: Not selected");
+		for(Item i : items) {
+			cont.remove(editButtons.get(i.itemId));
+			cont.remove(deleteButtons.get(i.itemId));
+		}
+		items.clear();
+		editButtons.clear();
+		deleteButtons.clear();
+		cont.revalidate();
+		cont.repaint();
+		updateItems();
+	}
+	private void checkOrder() {
+		Thread t = new Thread() {
+			public void run() {
+				while(checkOrder.checkState() == false) {
+					try {
+						Thread.sleep(1000);
+						if(checkOrder.checkState() == true) {
+							resetView();
+						}
+					}catch(Exception e) {
+						
+					}
+				}
+			}
+		};
+		t.start();
+	}
 	private void displayError(String err) {
 		errorFrame = new JFrame("Error");
 		errorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -357,8 +391,10 @@ public class MainProgram{
 		Timer t = new Timer(100, updateClockAction);
 		t.start();
 	}
+	//For testing
+	@SuppressWarnings("unused")
 	private void testFill() {
-		customer = new Customer(5,"Yeet Make", "Yeetkatu 13", "00690", "YeetCity", "070013212", "stadinkingi72@gmail.com");
+		customer = new Customer(1,"Yeet Make", "Yeetkatu 13", "00690", "YeetCity", "070013212", "stadinkingi72@gmail.com");
 		customerArea.setText("Customer: " + customer.name);
 		items.add(new Item(15, "Holset HX40 Super", 899, 652,850,1,0));
 		items.add(new Item(17, "M50B25 T4 exhaust manifold", 750, 450,750,1,1));

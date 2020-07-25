@@ -58,7 +58,7 @@ public class Login{
 	private void checkLogin(String un,char[] pwC){
 		User user = new User();
 		try {
-			URL url = new URL("http://koistine.com/OrderApi/login.php?");
+			URL url = new URL("http://koistine.com/OrderKoistine/v1/login.php?");
 			URLConnection con = url.openConnection();
 			HttpURLConnection http = (HttpURLConnection)con;
 			http.setRequestMethod("POST");

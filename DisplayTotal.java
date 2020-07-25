@@ -22,6 +22,7 @@ public class DisplayTotal {
 	DeliveryOption deliveryOption;
 	User user;
 	Customer customer;
+	CheckOrder checkOrder;
 	JFrame frame;
 	JPanel cont;
 	Font font;
@@ -34,11 +35,12 @@ public class DisplayTotal {
 	int height;
 	
 	
-	DisplayTotal(List<Item> items, DeliveryOption deliveryOption, User user, Customer customer){
+	DisplayTotal(List<Item> items, DeliveryOption deliveryOption, User user, Customer customer,CheckOrder checkOrder){
 		this.items = items;
 		this.deliveryOption = deliveryOption;
 		this.user = user;
 		this.customer = customer;
+		this.checkOrder = checkOrder;
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		height = (int)screenSize.getHeight();
 		frame = new JFrame("Total");
@@ -66,7 +68,8 @@ public class DisplayTotal {
 		submit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new InsertOrder(items,customer.customerid,deliveryOption.id,user.userId);
+				new InsertOrder(items,customer.customerid,deliveryOption.id,user.userId,checkOrder);
+				frame.dispose();
 			}
 		});
 		

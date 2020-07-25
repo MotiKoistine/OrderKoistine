@@ -38,11 +38,13 @@ public class SelectDelivery {
 	User user;
 	Customer customer;
 	DecimalFormatSymbols formatSymbols;
+	CheckOrder checkOrder;
 	
-	SelectDelivery(List<Item> items,User user,Customer customer){
+	SelectDelivery(List<Item> items,User user,Customer customer,CheckOrder checkOrder){
 		this.items = items;
 		this.user = user;
 		this.customer = customer;
+		this.checkOrder = checkOrder;
 		frame = new JFrame("Select delivery");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(1040,650);
@@ -123,7 +125,8 @@ public class SelectDelivery {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					delivery = dP;
-					new DisplayTotal(items, delivery,user,customer);
+					new DisplayTotal(items, delivery,user,customer,checkOrder);
+					frame.dispose();
 				}
 			});
 		}
